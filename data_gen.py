@@ -17,12 +17,12 @@ def generate(name):
     matrix = matrix-32678
     matrix = np.where(matrix>=-1000,matrix,-1000)
     #matrix.resize((256,256))
-    imwrite("s%4d.pmg"%has_processed, matrix)
-    img = imread(str(has_processed) + ".png",True)
-    theta = np.linspace(0.,180,256,endpoint=False)
+    imwrite("./datas/s%04d.png"%has_processed, matrix)
+    img = imread("./datas/s%04d.png"%has_processed,True)
+    theta = np.linspace(0.,180,512,endpoint=False)
     radon_img1 = radon(img,theta,circle=True)
-    radon_img = 255*(radon_img1/(2*256*256))
-    imwrite("r%4d.png"%has_processed,radon_img)
+    radon_img = 512*(radon_img1/(2*512*512))
+    imwrite("./datas/r%04d.png"%has_processed,radon_img)
     #ra_img = imread(str(has_processed)+"ra.png",True)
     #recover = iradon(radon_img1,theta,circle=True)
     #cv2.imwrite(str(has_processed)+"reco.png",recover)
@@ -33,12 +33,16 @@ def process(name):
     dirs = []
     if os.path.isdir(name):
         dirs = os.listdir(name)
-        for dir in dirs:
+        for dir in dirs:    
+            if has_processed>2000:
+                return
             if os.path.isdir(name+dir+'/'):
                 process(name+dir+'/')
             else:
                 generate(name+dir)
     else:
+        if has_processed>2000:
+            return
         generate(name)
 
 process(dir_name)
