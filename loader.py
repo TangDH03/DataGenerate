@@ -1,5 +1,6 @@
 from torch.utils.data import Dataset,DataLoader
 from skimage.io import imread
+from skimage.transform import radon,rescale
 import numpy as np
 import torch
 class datas(Dataset):
@@ -15,13 +16,16 @@ class datas(Dataset):
     def __len__(self):
         return len(self.dic)
     def __getitem__(self, index):
-        data = imread(self.root_dir+self.dic[index][0],True)
+        #data = imread(self.root_dir+self.dic[index][0],True)
         label = imread(self.root_dir+self.dic[index][1],True)
+        #data = data.astype(np.float32)
+        theta = np.linspace(0.,180,128,endpoint=True)
+        data = radon(label,theta=theta,circle=True)
         data = data.astype(np.float32)
         label = label.astype(np.float32)
         data = torch.from_numpy(data)
         label = torch.from_numpy(label)
-        data = data.view(-1,512,512)
-        label = label.view(-1,512,512)
+        data = data.view(-1,128,128)
+        label = label.view(-1,128,128)
         return data,label
 
